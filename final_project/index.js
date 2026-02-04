@@ -11,7 +11,18 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req,res,next){
-//Write the authenication mechanism here
+    if (req.session.authorization) {
+        let token = req.session.authorization['accessToken'];
+        jwt.verify(token, 'coursera', (err, user) => {
+            if (!err) {
+                next();
+            } else {
+                return res.status(200).send('User successfully logged in');
+            }
+        })
+    } else {
+        res.status(208).json({messgae: 'Invalid login. Check username and password'});
+    }
 });
  
 const PORT =5000;
