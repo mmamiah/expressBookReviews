@@ -13,19 +13,20 @@ public_users.post("/register", (req,res) => {
   }
 
   const user = users.filter((user) => user.username === req.body.username);
+  console.log(user);
   if (user.length > 0) {
     return res.status(404).json({message: "User already exists", payload: user});
   }
   users.push({
-    username: eq.body.username,
-    password: eq.body.password
+    username: req.body.username,
+    password: req.body.password
   });
-  return res.status(200).send("User registered");
+  return res.send("User registered");
 });
 
 // Get the book list available in the shop
 public_users.get('/',function (req, res) {
-  return res.status(200).send(JSON.stringify(books));
+  return res.send(JSON.stringify(books));
 });
 
 // Get book details based on ISBN
