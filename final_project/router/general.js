@@ -16,13 +16,13 @@ public_users.post("/register", (req,res) => {
   const user = users.filter((user) => user.username === username);
   console.log(user);
   if (user.length > 0) {
-    return res.status(404).json({message: "User " + username + " already exists", payload: user});
+    return res.status(404).json({message: "User " + username + " already exists", username: username});
   }
   users.push({
     username: username,
     password: req.body.password
   });
-  return res.json({message: "User [" + username + "] registered"});
+  return res.json({message: "User [" + username + "] successfull registered", username: username});
 });
 
 // Get the book list available in the shop
@@ -54,7 +54,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     try {
         const book = await getBookByISBN(isbn); 
         if (book) {
-            return res.send(book);
+            return res.json({message: "Successfull found the book", instanceof: isbn, book: book});
         }
         return res.status(404).json({message: "Book with ISBN = [" + isbn + "] not found"});
     } catch (error) {
@@ -81,7 +81,7 @@ public_users.get('/author/:author', async (req, res) => {
     try {
         let result = await getBookByAuthor(author);
         if (result) {
-            return res.json(result);
+            return res.json({message: "Book successfully found", book: result});
         } else {
             return res.status(404).json({message: "Book with author = [" + author + "] not found"});
         }
@@ -114,7 +114,7 @@ public_users.get('/title/:title',async (req, res) => {
   try {
     let result = await getBookDetails(title);
     if (result) {
-        return res.json(result);
+        return res.json({message: "Successfull founf the boo", book: result});
     } else {
         return res.status(404).json({message: "Book with title = [" + title + "] not found"});
     }
@@ -146,7 +146,7 @@ public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     let reviews = books[isbn];
     if (reviews) {
-        return res.json(reviews);
+        return res.json({message: "Reviews successfull collected", reviews: reviews, isbn: isbn});
     }
     return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
 });
