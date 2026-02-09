@@ -38,14 +38,13 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const book = books[req.params.isbn];
-    book.forEach((review) => {
-
-    });
-    if (book) {
-        book.reviews.push(req.body.review);
-        return res.status(200).json(book);
+    if (!book) {
+        return res.status(404).json({ message: "The request book does not exists." });
     }
-    return res.status(404).json({ message: "Review update failed" });
+    console.log(req.body);
+    book.reviews[req.user] = "test";
+    console.log(book.reviews);
+    return res.status(200).json(book);
 });
 
 module.exports.authenticated = regd_users;
