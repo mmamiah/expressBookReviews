@@ -30,7 +30,7 @@ regd_users.post("/login", (req,res) => {
         }
         res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
         res.cookie('username', username, { httpOnly: true, secure: false });
-        return res.json({ message : "Login success" });
+        return res.json({ message : "Login success for user: " + username, username : username });
     }
   return res.status(401).json({ message: "Authentication failed" });
 });
@@ -44,7 +44,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review added to book ISBN " + isbn });
+    return res.json({ message : "Review added to book ISBN " + isbn, book: book });
 });
 
 // Delete a book review
@@ -56,18 +56,20 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
     let reviews = undefined;
+    console.log("username: ", username);
     for (const prop in book.reviews) {
-        if (prop !== username) {
+        console.log("selected property: ", prop);
+        if (prop === username) {
+            console.log("Skipping user review: ", username);
+        } else {
             if (reviews === undefined) {
                 reviews = {};
             }
             reviews[prop] = book.reviews[prop];
         }
     }
-    if (reviews !== undefined) {
-        book.reviews = reviews;
-    }
-    return res.json({ message : "The review of the book ISBN " + isbn + " has been delete."});
+    book.reviews = reviews;
+    return res.json({ message : "The review of the book ISBN " + isbn + " has been delete.", book: book});
 });
 
 module.exports.authenticated = regd_users;
