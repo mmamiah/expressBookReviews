@@ -25,9 +25,27 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
-public_users.get('/',function (req, res) {
-  return res.send(JSON.stringify(books));
+public_users.get('/', async (req, res) => {
+    try {
+        const result = await getAllBooks();   
+        return res.send(JSON.stringify(result));
+    } catch (erreur) {
+        console.error(erreur);
+        return res.status(500).json({message: "Failed to collect data"});
+    }
 });
+
+function getAllBooks() {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (books) {
+                resolve(JSON.stringify(books));
+            } else {
+                reject(new Error("Failed to retrieve the books"));
+            }
+        }, 1000);
+    });
+}
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn',function (req, res) {

@@ -38,12 +38,34 @@ regd_users.post("/login", (req,res) => {
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
     const book = books[req.params.isbn];
+    const username = req.session.authorization['username'];
     if (!book) {
         return res.status(404).json({ message: "The request book does not exists." });
     }
     console.log(req.body);
-    book.reviews[req.user] = "test";
+    book.reviews[username] = req.body.review;
     console.log(book.reviews);
+    return res.status(200).json(book);
+});
+
+// Delete a book review
+regd_users.delete("/auth/review/:isbn", (req, res) => {
+    const book = books[req.params.isbn];
+    const username = req.session.authorization['username'];
+    if (!book) {
+        return res.status(404).json({ message: "The request book does not exists." });
+    }
+    let reviews = {};
+    console.log("actual review: ", book.reviews);
+    for (const prop in book.reviews) {
+        if (prop !== username) {
+            reviews[prop] = book.reviews[prop];
+        }
+    }
+    console.log("Book review: ", book.reviews);
+    console.log("Selected review: ", reviews);
+    book.reviews = reviews;
+    console.log("Review delete: ", book);
     return res.status(200).json(book);
 });
 
