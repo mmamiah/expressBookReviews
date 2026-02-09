@@ -19,7 +19,7 @@ app.use("/customer/auth/*", function auth(req,res,next){
                 req.user = user;
                 next();
             } else {
-                return res.status(200).send('User successfully logged in');
+                return res.json({message : 'User successfully logged in'});
             }
         })
     } else {

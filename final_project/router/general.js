@@ -15,13 +15,13 @@ public_users.post("/register", (req,res) => {
   const user = users.filter((user) => user.username === req.body.username);
   console.log(user);
   if (user.length > 0) {
-    return res.status(404).json({message: "User already exists", payload: user});
+    return res.status(404).json({message: "User " + user.username + " already exists", payload: user});
   }
   users.push({
     username: req.body.username,
     password: req.body.password
   });
-  return res.send("User registered");
+  return res.json({message: "User [" + user.username + "] registered"});
 });
 
 // Get the book list available in the shop
@@ -49,15 +49,16 @@ function getAllBooks() {
 
 // Get book details based on ISBN
 public_users.get('/isbn/:isbn', async (req, res) => {
+    const isbn = req.params.isbn;
     try {
-        const book = await getBookByISBN(req.params.isbn); 
+        const book = await getBookByISBN(isbn); 
         if (book) {
             return res.send(book);
         }
-        return res.status(404).json({message: "Not found"});
+        return res.status(404).json({message: "Book with ISBN = [" + isbn + "] not found"});
     } catch (error) {
         console.error(error);
-        return res.status(404).json({message: "Failed to retrieve the book"});
+        return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
     }
  });
   
@@ -75,16 +76,17 @@ function getBookByISBN(isbn) {
 
 // Get book details based on author
 public_users.get('/author/:author', async (req, res) => {
+    const author = req.params.author;
     try {
-        let result = await getBookByAuthor(req.params.author);
+        let result = await getBookByAuthor(author);
         if (result) {
             return res.json(result);
         } else {
-            return res.status(404).json({message: "Not found"});
+            return res.status(404).json({message: "Book with author = [" + author + "] not found"});
         }
     } catch (error) {
         console.error(error);
-        return res.status(404).json({message: "Failed to retrieve the book by author"});
+        return res.status(404).json({message: "Failed to retrieve the book with author= [" + author + "]"});
     }
 });
 
@@ -107,16 +109,17 @@ function getBookByAuthor(author) {
 
 // Get all books based on title
 public_users.get('/title/:title',async (req, res) => {
+    const title = req.params.title;
   try {
-    let result = await getBookDetails(req.params.title);
+    let result = await getBookDetails(title);
     if (result) {
         return res.json(result);
     } else {
-        return res.status(404).json({message: "Book not found"});
+        return res.status(404).json({message: "Book with title = [" + title + "] not found"});
     }
   } catch(error) {
     console.error(error);
-    return res.status(404).json({message: "Failed to retrieve the book by title"});
+    return res.status(404).json({message: "Failed to retrieve the book with title= [" + title + "]"});
   }
 });
 
@@ -139,11 +142,12 @@ function getBookDetails(title) {
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-    let reviews = books[req.params.isbn];
+    const isbn = req.params.isbn;
+    let reviews = books[isbn];
     if (reviews) {
-        return res.status(200).json(reviews);
+        return res.json(reviews);
     }
-    return res.status(404).json({message: "Not found"});
+    return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
 });
 
 module.exports.general = public_users;
