@@ -11,7 +11,6 @@ app.use(express.json());
 app.use("/customer",session({secret:"fingerprint_customer",resave: true, saveUninitialized: true}))
 
 app.use("/customer/auth/*", function auth(req,res,next){
-    console.log(req.session);
     if (req.session.authorization) {
         let token = req.session.authorization['accessToken'];
         jwt.verify(token, 'fingerprint_customer', (err, user) => {
@@ -19,11 +18,11 @@ app.use("/customer/auth/*", function auth(req,res,next){
                 req.user = user;
                 next();
             } else {
-                return res.json({message : 'User successfully logged in'});
+                return res.status(401).json({message : 'Invalid authentication, please login.', details: err});
             }
         })
     } else {
-        res.status(208).json({message: 'Invalid login. Check username and password'});
+        res.status(401).json({message: 'Invalid login. Check username and password'});
     }
 });
  

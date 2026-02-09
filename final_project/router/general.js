@@ -12,16 +12,17 @@ public_users.post("/register", (req,res) => {
     return res.status(404).json({message: "Password is missing"});
   }
 
-  const user = users.filter((user) => user.username === req.body.username);
+  const username = req.body.username;
+  const user = users.filter((user) => user.username === username);
   console.log(user);
   if (user.length > 0) {
-    return res.status(404).json({message: "User " + user.username + " already exists", payload: user});
+    return res.status(404).json({message: "User " + username + " already exists", payload: user});
   }
   users.push({
-    username: req.body.username,
+    username: username,
     password: req.body.password
   });
-  return res.json({message: "User [" + user.username + "] registered"});
+  return res.json({message: "User [" + username + "] registered"});
 });
 
 // Get the book list available in the shop

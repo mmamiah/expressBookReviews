@@ -32,7 +32,7 @@ regd_users.post("/login", (req,res) => {
         res.cookie('username', username, { httpOnly: true, secure: false });
         return res.json({ message : "Login success" });
     }
-  return res.status(208).json({ message: "Authentication failed" });
+  return res.status(401).json({ message: "Authentication failed" });
 });
 
 // Add a book review
