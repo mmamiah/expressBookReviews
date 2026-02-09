@@ -72,19 +72,39 @@ function getBookByISBN(isbn) {
         }, 1000);
     });
 }
+
 // Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  let result = [];
-  for (var isbn in books) {
-    if (books[isbn].author === req.params.author) {
-        result.push(books[isbn]);
+public_users.get('/author/:author', async (req, res) => {
+    
+    try {
+        let result = await getBookByAuthor(req.params.author);
+        if (result) {
+            return res.json(result);
+        } else {
+            return res.status(404).json({message: "Not found"});
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(404).json({message: "Failed to retrieve the book by author"});
     }
-  }
-  if (result.length > 0 ) {
-    return res.status(200).json(result);
-  }
-  return res.status(404).json({message: "Not found"});
 });
+
+function getBookByAuthor(author) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            let result = [];
+            for (var isbn in books) {
+              if (books[isbn].author === author) {
+                  result.push(books[isbn]);
+              }
+            }
+            if (result.length > 0 ) {
+              return resolve(result);
+            }
+            return reject(new Error({message: "Book not found"}));
+        }, 1000);
+    });
+}
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
