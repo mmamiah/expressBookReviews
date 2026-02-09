@@ -30,43 +30,44 @@ regd_users.post("/login", (req,res) => {
         }
         res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
         res.cookie('username', username, { httpOnly: true, secure: false });
-        return res.send("Login success");
+        return res.json({ message : "Login success" });
     }
   return res.status(208).json({ message: "Authentication failed" });
 });
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    const book = books[req.params.isbn];
+    const isbn = req.params.isbn;
+    const book = books[isbn];
     const username = req.session.authorization['username'];
     if (!book) {
-        return res.status(404).json({ message: "The request book does not exists." });
+        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
-    console.log(req.body);
     book.reviews[username] = req.body.review;
-    console.log(book.reviews);
-    return res.status(200).json(book);
+    return res.json({ message : "Review added to book ISBN " + isbn });
 });
 
 // Delete a book review
 regd_users.delete("/auth/review/:isbn", (req, res) => {
-    const book = books[req.params.isbn];
+    const isbn = req.params.isbn;
+    const book = books[isbn];
     const username = req.session.authorization['username'];
     if (!book) {
-        return res.status(404).json({ message: "The request book does not exists." });
+        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
-    let reviews = {};
-    console.log("actual review: ", book.reviews);
+    let reviews = undefined;
     for (const prop in book.reviews) {
         if (prop !== username) {
+            if (reviews === undefined) {
+                reviews = {};
+            }
             reviews[prop] = book.reviews[prop];
         }
     }
-    console.log("Book review: ", book.reviews);
-    console.log("Selected review: ", reviews);
-    book.reviews = reviews;
-    console.log("Review delete: ", book);
-    return res.status(200).json(book);
+    if (reviews !== undefined) {
+        book.reviews = reviews;
+    }
+    return res.json({ message : "The review of the book ISBN " + isbn + " has been delete."});
 });
 
 module.exports.authenticated = regd_users;
