@@ -29,8 +29,8 @@ public_users.get('/', async (req, res) => {
     try {
         const result = await getAllBooks();   
         return res.send(JSON.stringify(result));
-    } catch (erreur) {
-        console.error(erreur);
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({message: "Failed to collect data"});
     }
 });
@@ -48,14 +48,30 @@ function getAllBooks() {
 }
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-  const book = books[req.params.isbn];
-  if (book) {
-    return res.status(200).json(book);
-  }
-  return res.status(404).json({message: "Not found"});
+public_users.get('/isbn/:isbn', async (req, res) => {
+    try {
+        const book = await getBookByISBN(req.params.isbn); 
+        if (book) {
+            return res.send(book);
+        }
+        return res.status(404).json({message: "Not found"});
+    } catch (error) {
+        console.error(error);
+        return res.status(404).json({message: "Failed to retrieve the book"});
+    }
  });
   
+function getBookByISBN(isbn) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (isbn && books) {
+                resolve(books[isbn]);
+            } else {
+                reject(new Error("Failed to retrieve the book by ISBN n." + isbn));
+            }
+        }, 1000);
+    });
+}
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   let result = [];
