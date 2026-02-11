@@ -29,7 +29,7 @@ public_users.post("/register", (req,res) => {
 public_users.get('/', async (req, res) => {
     try {
         const result = await getAllBooks();   
-        return res.send(JSON.stringify(result));
+        return res.json(result);
     } catch (error) {
         console.error(error);
         return res.status(500).json({message: "Failed to collect data"});
@@ -40,7 +40,7 @@ function getAllBooks() {
     return new Promise((resolve, reject) => {
         setTimeout(() => {
             if (books) {
-                resolve(JSON.stringify(books));
+                resolve(books);
             } else {
                 reject(new Error("Failed to retrieve the books"));
             }
@@ -54,7 +54,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     try {
         const book = await getBookByISBN(isbn); 
         if (book) {
-            return res.json({message: "Successfull found the book", instanceof: isbn, book: book});
+            return res.json({message: "Successfull found the bookwith ISBN = [" + isbn + "]", book: book});
         }
         return res.status(404).json({message: "Book with ISBN = [" + isbn + "] not found"});
     } catch (error) {
@@ -114,7 +114,7 @@ public_users.get('/title/:title',async (req, res) => {
   try {
     let result = await getBookDetails(title);
     if (result) {
-        return res.json({message: "Successfull founf the boo", book: result});
+        return res.json({message: "Successfull found the book", book: result});
     } else {
         return res.status(404).json({message: "Book with title = [" + title + "] not found"});
     }

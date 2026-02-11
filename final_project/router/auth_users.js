@@ -9,7 +9,7 @@ const isValid = (username)=>{ //returns boolean
 //write code to check is the username is valid
 }
 
-const authenticatedUser = (username,password)=>{ 
+const authenticatedUser = (username,password)=> { 
     const user = users.filter((usr) => usr.username === username && usr.password === password);
     return (!user || user.length == 0) ? false : true;
 }
@@ -18,9 +18,6 @@ const authenticatedUser = (username,password)=>{
 regd_users.post("/login", (req,res) => {
     const username = req.body.username;
     const password = req.body.password;
-    if (!username || !password) {
-        return res.status(404).json({ message: "Error logging in" });
-    }
     if (authenticatedUser(username, password)) {
         // Generate JWT access token
         let accessToken = jwt.sign({data: password}, 'fingerprint_customer', { expiresIn: 60 * 60 });
@@ -32,7 +29,7 @@ regd_users.post("/login", (req,res) => {
         res.cookie('username', username, { httpOnly: true, secure: false });
         return res.json({ message : "Login success", username : username });
     }
-  return res.status(401).json({ message: "Authentication failed" });
+    return res.status(401).json({ message: "Invalid username or password" });
 });
 
 // Add a book review
