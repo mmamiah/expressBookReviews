@@ -154,7 +154,7 @@ public_users.get('/review/:isbn',function (req, res) {
 
 
 // Add a book review
-public_users.put("/auth/review/:isbn", (req, res) => {
+public_users.put("/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const book = books[isbn];
     const username = req?.session?.authorization['username'];
