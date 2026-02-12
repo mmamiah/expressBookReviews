@@ -174,10 +174,10 @@ public_users.put("/review/:isbn", (req, res) => {
 public_users.delete("/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const book = books[isbn];
-    const username = req?.session?.authorization['username'];
     if (!book) {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
+    const username = req?.session?.authorization['username'];
     if (!username) {
         return res.status(404).json({ message: "Please login." });
     }
