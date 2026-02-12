@@ -135,6 +135,14 @@ function getBookDetails(title) {
 }
 
 //  Get book review
+public_users.get('/review',function (req, res) {
+    let result = {};
+    for(prop in books) {
+        result[prop] = books[prop].reviews;
+    }
+    return res.json({message: "Success", reviews: JSON.stringify(result)});
+});
+
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     let book = books[isbn];
@@ -142,6 +150,50 @@ public_users.get('/review/:isbn',function (req, res) {
         return res.json({message: "Success", reviews: JSON.stringify(book.reviews), isbn: isbn});
     }
     return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
+});
+
+
+// Add a book review
+regd_users.put("/auth/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+    const username = req?.session?.authorization['username'];
+    if (!book) {
+        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
+    }
+    if (!username) {
+        return res.status(404).json({ message: "Please login." });
+    }
+    book.reviews[username] = req.body.review;
+    return res.json({ message : "Review successfull added.", username: username, isbn: isbn, reviews : req.body.review});
+});
+
+// Delete a book review
+regd_users.delete("/review/:isbn", (req, res) => {
+    const isbn = req.params.isbn;
+    const book = books[isbn];
+    const username = req?.session?.authorization['username'];
+    if (!book) {
+        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
+    }
+    if (!username) {
+        return res.status(404).json({ message: "Please login." });
+    }
+    let reviews = undefined;
+    console.log("username: ", username);
+    for (const prop in book.reviews) {
+        console.log("selected property: ", prop);
+        if (prop === username) {
+            console.log("Skipping user review: ", username);
+        } else {
+            if (reviews === undefined) {
+                reviews = {};
+            }
+            reviews[prop] = book.reviews[prop];
+        }
+    }
+    book.reviews = reviews;
+    return res.json({ message : "Review successfull deleted.", username: username, isbn: isbn, reviews : req.body.review});
 });
 
 module.exports.general = public_users;
