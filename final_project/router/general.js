@@ -54,7 +54,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     const isbn = req.params.isbn;
     try {
         return await getBookByISBN(isbn)
-            .then(resolvedBooks => res.json({message: "Success", book: resolvedBooks}))
+            .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
             .catch(error => res.status(500).json({message: error.message})); 
     } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ public_users.get('/author/:author', async (req, res) => {
     const author = req.params.author;
     try {
         return await getBookByAuthor(author)
-            .then(resolvedBooks => res.json({message: "Success", book: resolvedBooks}))
+            .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
             .catch(error => res.status(500).json({message: error.message}));
     } catch (error) {
         console.error(error);
@@ -109,7 +109,7 @@ public_users.get('/title/:title',async (req, res) => {
     const title = req.params.title;
   try {
     return await getBookDetails(title)
-        .then(resolvedBooks => res.json({message: "Success", book: resolvedBooks}))
+        .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
         .catch(error => res.status(500).json({message: error.message}));
   } catch(error) {
     console.error(error);
@@ -137,9 +137,9 @@ function getBookDetails(title) {
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
-    let reviews = books[isbn];
-    if (reviews) {
-        return res.json({message: "Success", reviews: reviews, isbn: isbn});
+    let book = books[isbn];
+    if (book) {
+        return res.json({message: "Success", reviews: JSON.stringify(book.reviews), isbn: isbn});
     }
     return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
 });

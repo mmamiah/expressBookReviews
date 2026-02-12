@@ -41,7 +41,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successfull added.", username: username, book: book });
+    return res.json({ message : "Review successfull added.", username: username, isbn: isbn, reviews : req.body.review});
 });
 
 // Delete a book review
@@ -66,7 +66,7 @@ regd_users.delete("/auth/review/:isbn", (req, res) => {
         }
     }
     book.reviews = reviews;
-    return res.json({ message : "Review successfull deleted.", username: username, book: book});
+    return res.json({ message : "Review successfull deleted.", username: username, isbn: isbn, reviews : req.body.review});
 });
 
 module.exports.authenticated = regd_users;
