@@ -6,6 +6,7 @@ const public_users = express.Router();
 
 
 public_users.post("/register", (req,res) => {
+
   if (!req.body.username) {
     return res.status(404).json({message: "Username is missing"});
   } else if (!req.body.password) {
@@ -14,7 +15,6 @@ public_users.post("/register", (req,res) => {
 
   const username = req.body.username;
   const user = users.filter((user) => user.username === username);
-  console.log(user);
   if (user.length > 0) {
     return res.status(404).json({message: "User " + username + " already exists", username: username});
   }
@@ -54,7 +54,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     const isbn = req.params.isbn;
     try {
         return await getBookByISBN(isbn)
-            .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
+            .then(book => res.json({message: "Success", author: book.author, title: book.title, reviews: JSON.stringify(book.review)}))
             .catch(error => res.status(500).json({message: error.message})); 
     } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ public_users.get('/author/:author', async (req, res) => {
     const author = req.params.author;
     try {
         return await getBookByAuthor(author)
-            .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
+            .then(books => res.json({message: "Success", books: books}))
             .catch(error => res.status(500).json({message: error.message}));
     } catch (error) {
         console.error(error);
@@ -93,7 +93,8 @@ function getBookByAuthor(author) {
             let result = [];
             for (var isbn in books) {
               if (books[isbn].author === author) {
-                  result.push(books[isbn]);
+                const book = books[isbn];
+                  result.push({isbn: isbn, author: book.author, title: book.title, reviews: JSON.stringify(book.review)});
               }
             }
             if (result.length > 0 ) {
@@ -109,7 +110,7 @@ public_users.get('/title/:title',async (req, res) => {
     const title = req.params.title;
   try {
     return await getBookDetails(title)
-        .then(resolvedBooks => res.json({message: "Success", book: JSON.stringify(resolvedBooks)}))
+        .then(books => res.json({message: "Success", books: books}))
         .catch(error => res.status(500).json({message: error.message}));
   } catch(error) {
     console.error(error);
@@ -123,7 +124,8 @@ function getBookDetails(title) {
             let result = [];
             for (var isbn in books) {
               if (books[isbn].title === title) {
-                  result.push(books[isbn]);
+                const book = books[isbn];
+                result.push({isbn: isbn, author: book.author, title: book.title, reviews: JSON.stringify(book.review)});
               }
             }
             if (result.length > 0 ) {
@@ -195,5 +197,13 @@ public_users.delete("/review/:isbn", (req, res) => {
     book.reviews = reviews;
     return res.json({ message : "Review successfull deleted.", username: username, isbn: isbn, reviews : req.body.review});
 });
+
+function bookJson(book) {
+    return {
+        author: book.author, 
+        title: book.title, 
+        reviews: JSON.stringify(book.review)
+    }
+}
 
 module.exports.general = public_users;
