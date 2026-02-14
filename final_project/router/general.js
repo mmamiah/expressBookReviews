@@ -169,8 +169,9 @@ public_users.put("/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "Please login." });
     }
     const username = req.session.authorization['username'];
+    let operation = book.reviews[username] ? "updated" : "added";
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successful added.", reviews: JSON.stringify(req.body.review) });
+    return res.json({ message : "Review " + operation + " successfully", reviews: req.body.review });
 });
 
 // Delete a book review
@@ -197,7 +198,7 @@ public_users.delete("/review/:isbn", (req, res) => {
         }
     }
     book.reviews = reviews;
-    return res.json({ message : "Review successful deleted."});
+    return res.json({ message : "Review for ISBN " + isbn + " deleted"});
 });
 
 function bookJson(book) {
