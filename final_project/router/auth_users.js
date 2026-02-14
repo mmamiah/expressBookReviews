@@ -27,7 +27,7 @@ regd_users.post("/login", (req,res) => {
         }
         res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
         res.cookie('username', username, { httpOnly: true, secure: false });
-        return res.json({ message : "Login success", username : username });
+        return res.json({ message : "Login success"});
     }
     return res.status(401).json({ message: "Invalid username or password" });
 });

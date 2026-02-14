@@ -43,7 +43,7 @@ function getAllBooks() {
             if (books) {
                 resolve(books);
             } else {
-                reject(new Error("Failed to retrieve the books"));
+                reject(new Error("No books found."));
             }
         }, 1000);
     });
@@ -68,7 +68,7 @@ function getBookByISBN(isbn) {
             if (isbn && books) {
                 resolve(books[isbn]);
             } else {
-                reject(new Error("Failed to retrieve the book by ISBN n." + isbn));
+                reject(new Error("No book found for this ISBN."));
             }
         }, 1000);
     });
@@ -100,7 +100,7 @@ function getBookByAuthor(author) {
             if (result.length > 0 ) {
               return resolve(result);
             }
-            return reject(new Error({message: "Book not found for author= " + author}));
+            return reject(new Error({message: "No book found for this author"}));
         }, 1000);
     });
 }
@@ -131,7 +131,7 @@ function getBookDetails(title) {
             if (result.length > 0 ) {
               return resolve(result);
             }
-            return reject(new Error({message: "Book not found"}));
+            return reject(new Error({message: "No book found for this title"}));
         }, 1000);
     });
 }
@@ -151,7 +151,7 @@ public_users.get('/review/:isbn',function (req, res) {
     if (book) {
         return res.json({message: "Successful", reviews: JSON.stringify(book.reviews), isbn: isbn});
     }
-    return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
+    return res.status(404).json({message: "No reviews found for this book."});
 });
 
 
@@ -167,7 +167,7 @@ public_users.put("/review/:isbn", (req, res) => {
     }
     const username = req.session.authorization['username'];
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successful added.", username: username, isbn: isbn, reviews : req.body.review});
+    return res.json({ message : "Review successful added." });
 });
 
 // Delete a book review
