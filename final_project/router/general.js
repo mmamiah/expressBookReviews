@@ -22,7 +22,7 @@ public_users.post("/register", (req,res) => {
     username: username,
     password: req.body.password
   });
-  return res.json({message: "Success", username: username});
+  return res.json({message: "Successful", username: username});
 });
 
 // Get the book list available in the shop
@@ -54,7 +54,7 @@ public_users.get('/isbn/:isbn', async (req, res) => {
     const isbn = req.params.isbn;
     try {
         return await getBookByISBN(isbn)
-            .then(book => res.json({message: "Success", author: book.author, title: book.title, reviews: JSON.stringify(book.review)}))
+            .then(book => res.json({message: "Successful", author: book.author, title: book.title, reviews: JSON.stringify(book.review)}))
             .catch(error => res.status(500).json({message: error.message})); 
     } catch (error) {
         console.error(error);
@@ -79,7 +79,7 @@ public_users.get('/author/:author', async (req, res) => {
     const author = req.params.author;
     try {
         return await getBookByAuthor(author)
-            .then(books => res.json({message: "Success", books: books}))
+            .then(books => res.json({message: "Successful", books: books}))
             .catch(error => res.status(500).json({message: error.message}));
     } catch (error) {
         console.error(error);
@@ -100,7 +100,7 @@ function getBookByAuthor(author) {
             if (result.length > 0 ) {
               return resolve(result);
             }
-            return reject(new Error({message: "Book not found"}));
+            return reject(new Error({message: "Book not found for author= " + author}));
         }, 1000);
     });
 }
@@ -110,7 +110,7 @@ public_users.get('/title/:title',async (req, res) => {
     const title = req.params.title;
   try {
     return await getBookDetails(title)
-        .then(books => res.json({message: "Success", books: books}))
+        .then(books => res.json({message: "Successful", books: books}))
         .catch(error => res.status(500).json({message: error.message}));
   } catch(error) {
     console.error(error);
@@ -142,14 +142,14 @@ public_users.get('/review',function (req, res) {
     for(prop in books) {
         result[prop] = books[prop].reviews;
     }
-    return res.json({message: "Success", reviews: JSON.stringify(result)});
+    return res.json({message: "Successful", reviews: JSON.stringify(result)});
 });
 
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     let book = books[isbn];
     if (book) {
-        return res.json({message: "Success", reviews: JSON.stringify(book.reviews), isbn: isbn});
+        return res.json({message: "Successful", reviews: JSON.stringify(book.reviews), isbn: isbn});
     }
     return res.status(404).json({message: "Failed to retrieve the book with ISBN =[" + isbn + "]"});
 });
@@ -167,7 +167,7 @@ public_users.put("/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "Please login." });
     }
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successfull added.", username: username, isbn: isbn, reviews : req.body.review});
+    return res.json({ message : "Review successful added.", username: username, isbn: isbn, reviews : req.body.review});
 });
 
 // Delete a book review
@@ -194,7 +194,7 @@ public_users.delete("/review/:isbn", (req, res) => {
         }
     }
     book.reviews = reviews;
-    return res.json({ message : "Review successfull deleted.", username: username, isbn: isbn, reviews : req.body.review});
+    return res.json({ message : "Review successful deleted."});
 });
 
 function bookJson(book) {

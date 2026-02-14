@@ -41,32 +41,7 @@ regd_users.put("/auth/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successfull added.", username: username, isbn: isbn, reviews : req.body.review});
-});
-
-// Delete a book review
-regd_users.delete("/auth/review/:isbn", (req, res) => {
-    const isbn = req.params.isbn;
-    const book = books[isbn];
-    const username = req.session.authorization['username'];
-    if (!book) {
-        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
-    }
-    let reviews = undefined;
-    console.log("username: ", username);
-    for (const prop in book.reviews) {
-        console.log("selected property: ", prop);
-        if (prop === username) {
-            console.log("Skipping user review: ", username);
-        } else {
-            if (reviews === undefined) {
-                reviews = {};
-            }
-            reviews[prop] = book.reviews[prop];
-        }
-    }
-    book.reviews = reviews;
-    return res.json({ message : "Review successfull deleted.", username: username, isbn: isbn, reviews : req.body.review});
+    return res.json({ message : "Review successful added.", username: username, isbn: isbn, reviews : req.body.review});
 });
 
 module.exports.authenticated = regd_users;
