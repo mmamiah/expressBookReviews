@@ -182,7 +182,6 @@ public_users.delete("/review/:isbn", (req, res) => {
         return res.status(404).json({ message: "Please login." });
     }
     let reviews = undefined;
-    console.log("username: ", username);
     for (const prop in book.reviews) {
         console.log("selected property: ", prop);
         if (prop === username) {
