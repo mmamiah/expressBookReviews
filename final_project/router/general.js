@@ -159,13 +159,13 @@ public_users.get('/review/:isbn',function (req, res) {
 public_users.put("/review/:isbn", (req, res) => {
     const isbn = req.params.isbn;
     const book = books[isbn];
-    const username = req?.session?.authorization['username'];
     if (!book) {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
-    if (!username) {
+    if (!req?.session?.authorization) {
         return res.status(404).json({ message: "Please login." });
     }
+    const username = req.session.authorization['username'];
     book.reviews[username] = req.body.review;
     return res.json({ message : "Review successful added.", username: username, isbn: isbn, reviews : req.body.review});
 });
@@ -177,10 +177,10 @@ public_users.delete("/review/:isbn", (req, res) => {
     if (!book) {
         return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
     }
-    const username = req?.session?.authorization['username'];
-    if (!username) {
+    if (!req?.session?.authorization) {
         return res.status(404).json({ message: "Please login." });
     }
+    const username = req.session.authorization['username'];
     let reviews = undefined;
     for (const prop in book.reviews) {
         console.log("selected property: ", prop);

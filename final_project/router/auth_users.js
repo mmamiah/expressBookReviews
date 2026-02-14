@@ -32,18 +32,6 @@ regd_users.post("/login", (req,res) => {
     return res.status(401).json({ message: "Invalid username or password" });
 });
 
-// Add a book review
-regd_users.put("/auth/review/:isbn", (req, res) => {
-    const isbn = req.params.isbn;
-    const book = books[isbn];
-    const username = req.session.authorization['username'];
-    if (!book) {
-        return res.status(404).json({ message: "The book ISBN [" + isbn + "] does not exists." });
-    }
-    book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successful added.", username: username, isbn: isbn, reviews : req.body.review});
-});
-
 module.exports.authenticated = regd_users;
 module.exports.isValid = isValid;
 module.exports.users = users;
