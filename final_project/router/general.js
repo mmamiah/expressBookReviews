@@ -1,4 +1,5 @@
 const express = require('express');
+const jwt = require('jsonwebtoken');
 let books = require("./booksdb.js");
 let isValid = require("./auth_users.js").isValid;
 let users = require("./auth_users.js").users;
@@ -23,6 +24,29 @@ public_users.post("/register", (req,res) => {
     password: req.body.password
   });
   return res.json({message: "Successful", username: username});
+});
+
+const authenticatedUser = (username,password)=> { 
+    const user = users.filter((usr) => usr.username === username && usr.password === password);
+    return (!user || user.length == 0) ? false : true;
+}
+
+//only registered users can login
+public_users.post("/login", (req,res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (authenticatedUser(username, password)) {
+        // Generate JWT access token
+        let accessToken = jwt.sign({data: password}, 'fingerprint_customer', { expiresIn: 60 * 60 });
+        // Store access token and username in session
+        req.session.authorization = {
+            accessToken, username
+        }
+        res.cookie('accessToken', accessToken, { httpOnly: true, secure: false });
+        res.cookie('username', username, { httpOnly: true, secure: false });
+        return res.json({ message : "Successful logging in as a registered user"});
+    }
+    return res.status(401).json({ message: "Invalid username or password" });
 });
 
 // Get the book list available in the shop
