@@ -170,7 +170,7 @@ public_users.put("/review/:isbn", (req, res) => {
     }
     const username = req.session.authorization['username'];
     book.reviews[username] = req.body.review;
-    return res.json({ message : "Review successful added." });
+    return res.json({ message : "Review successful added.", reviews: JSON.stringify(req.body.review) });
 });
 
 // Delete a book review
