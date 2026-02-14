@@ -148,12 +148,15 @@ public_users.get('/review',function (req, res) {
 public_users.get('/review/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     let book = books[isbn];
-    if (book) {
+    if (book && !isEmptyObject(book.reviews)) {
         return res.json({message: "Successful", reviews: JSON.stringify(book.reviews), isbn: isbn});
     }
     return res.status(404).json({message: "No reviews found for this book."});
 });
 
+function isEmptyObject(obj){
+    return !obj || JSON.stringify(obj) === '{}'
+}
 
 // Add a book review
 public_users.put("/review/:isbn", (req, res) => {
